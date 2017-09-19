@@ -1,19 +1,18 @@
-import React from 'react';
-import DatePicker from 'react-bootstrap-date-picker';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import HelpBlock from 'react-bootstrap/lib/HelpBlock';
-import { browserHistory } from 'react-router';
-import {
-    BrowserRouter as Router,
-    Route,
-    Link
-} from 'react-router-dom';
+import React from 'react'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import { editStudent, addStudent } from '../actions'
+import DatePicker from 'react-bootstrap-date-picker'
+import FormGroup from 'react-bootstrap/lib/FormGroup'
+import ControlLabel from 'react-bootstrap/lib/ControlLabel'
+import HelpBlock from 'react-bootstrap/lib/HelpBlock'
+import { browserHistory } from 'react-router'
 
 class StudentDetail extends React.Component {
     constructor(props) {
         super(props);
         console.log(this.props.student);
+        const { students } = this.props
         this.state = {
             student: this.props.student
         }
@@ -42,24 +41,15 @@ class StudentDetail extends React.Component {
     }
 
     handleSubmit() {
-        var urlId = this.state.student.id;
+        var urlId = this.state.student.id
         if (urlId) {
-            var myArray = JSON.parse(localStorage.getItem('myData'));
-            for (var i = 0; i < myArray.length; i++) {
-                if (myArray[i].id == urlId) {
-                    myArray[i] = this.state.student;
-                }
-            }
-            localStorage.setItem('myData', JSON.stringify(myArray));
-            this.setState({ data: myArray });
+            this.props.onEdit(this.state.student)
         } else {
-            var item = this.state.student;
-            item.id = new Date().getTime();
-            var myArray = JSON.parse(localStorage.getItem('myData'));
-            myArray.push(item);
-            localStorage.setItem('myData', JSON.stringify(myArray));
-            this.setState({ data: myArray });
+            var item = this.state.student
+            item.id = new Date().getTime()
+            onAdd(item)
         }
+        browserHistory.push('/addstudent');
     }
 
     render() {
@@ -88,10 +78,10 @@ class StudentDetail extends React.Component {
                         {/*<label htmlFor="inputDate" className="col-form-label">Date</label>*/}
                         {/*<input type="date" className="form-control" name="date" value={this.state.student.date} placeholder="Date" onChange={this.handleInputChange} />*/}
                         {/*<DatePicker id="example-datepicker" value={this.state.student.date} onChange={this.handleInputChange} />*/}
-                        <FormGroup>
+                        {/*<FormGroup>
                             <ControlLabel>Date</ControlLabel>
                             <DatePicker id="date" placeholder="Date" value={this.state.student.date} onChange={this.handleChange}/>
-                        </FormGroup>
+                        </FormGroup>*/}
                     </div>
                     <div className="col-2">
                         <label htmlFor="inputGender" className="col-form-label">Gender</label>
@@ -109,5 +99,26 @@ class StudentDetail extends React.Component {
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+  students: state.students
+})
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onEdit: (student) => {
+      dispatch(editStudent(student))
+    },
+    onAdd: (student) => {
+      dispatch(addStudent(student))
+    },
+    dispatch: dispatch
+  }
+}
+
+StudentDetail = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StudentDetail)
 
 export default StudentDetail

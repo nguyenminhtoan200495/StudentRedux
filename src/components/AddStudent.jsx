@@ -1,10 +1,5 @@
 import React from 'react'
 import StudentDetail from './StudentDetail.jsx'
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom'
 
 class AddStudent extends React.Component {
   constructor(props) {

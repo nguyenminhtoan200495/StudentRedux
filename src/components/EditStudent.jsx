@@ -1,21 +1,20 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import StudentDetail from './StudentDetail.jsx'
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom'
 
 class EditStudent extends React.Component {
 
   constructor(props) {
     super(props);
-    var urlId = this.props.match.params.id;
+    var urlId = this.props.params.id;
     this.student = this.getInfoStudent(urlId);
+    this.student.date = new Date();
   }
 
   getInfoStudent(urlId) {
-    var myArray = JSON.parse(localStorage.getItem('myData'));
+    const { students } = this.props
+    var myArray = students
     for (var i = 0; i < myArray.length; i++) {
       if (myArray[i].id == urlId) {
         var student = myArray[i];
@@ -30,5 +29,14 @@ class EditStudent extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  students: state.students
+})
+
+EditStudent = connect(
+  mapStateToProps,
+//   mapDispatchToProps
+)(EditStudent)
 
 export default EditStudent

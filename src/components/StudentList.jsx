@@ -1,10 +1,9 @@
 import React from 'react'
-import Modal from 'react-modal';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom'
+import Modal from 'react-modal'
+import { Link } from 'react-router'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import { deleteStudent } from '../actions'
 
 const customStyles = {
   content: {
@@ -40,17 +39,8 @@ class StudentList extends React.Component {
   }
 
   handleDelete() {
-    var myArray = JSON.parse(localStorage.getItem('myData'));
-    for (var i = 0; i < myArray.length; i++) {
-      if (myArray[i].id == this.state.deleteId) {
-        myArray.splice(i, 1);
-        break;
-      }
-    }
-    localStorage.setItem('myData', JSON.stringify(myArray));
+    this.props.onDelete(this.state.deleteId)
     this.setState({ modalIsOpen: false, deleteId: -1 });
-    this.props.reload();
-
   }
 
   render() {
@@ -112,5 +102,18 @@ class StudentList extends React.Component {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onDelete: (id) => {
+      dispatch(deleteStudent(id))
+    }
+  }
+}
+
+StudentList = connect(
+  null,
+  mapDispatchToProps
+)(StudentList)
 
 export default StudentList
